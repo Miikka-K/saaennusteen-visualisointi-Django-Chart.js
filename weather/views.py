@@ -18,8 +18,8 @@ class ForecastView(View):
 
         qs = Forecast.objects.filter(city=city)[:7] if city else []
         labels = [f.date.isoformat() for f in qs]
-        data_max = [f.temp_max for f in qs]
-        data_min = [f.temp_min for f in qs]
+        data_max = [float(f.temp_max) for f in qs]
+        data_min = [float(f.temp_min) for f in qs]
 
         ctx = {
             "cities": cities,
