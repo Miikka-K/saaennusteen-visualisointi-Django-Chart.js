@@ -11,10 +11,14 @@ def fetch_and_store_forecast(city: City):
         "daily": "temperature_2m_max,temperature_2m_min",
         "timezone": "auto",
     }
-    r = requests.get(OPEN_METEO_URL, params=params, timeout=20)
-    r.raise_for_status()
+    try:
+        r = requests.get(OPEN_METEO_URL, params=params, timeout=20)
+        r.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        print(f"API-yhteys epäonnistui: {e}")
+        return
+    
     data = r.json()
-
     dates = data.get("daily", {}).get("time", [])
     maxes = data.get("daily", {}).get("temperature_2m_max", [])
     mins  = data.get("daily", {}).get("temperature_2m_min", [])
