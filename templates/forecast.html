@@ -178,7 +178,7 @@
         </div>
       </div>
 
-      <script>
+        <script>
         // Data backendista
         const labels   = {{ labels|safe }};
         const dataMax  = {{ data_max|safe }};
@@ -186,87 +186,86 @@
         const dataRain = {{ data_rain|safe }};
         const dataWind = {{ data_wind|safe }};
         const dataCode = {{ data_code|safe }};
+        const hourlyData = {{ hourly_json|safe }};   // 👈 UUSI: tuntidata
         console.log('codes from backend:', dataCode);
 
         // Päivitä pääkortti (tämän päivän data)
         if (dataMax.length && dataMin.length) {
-          const todayMax = Math.round(dataMax[0]);
-          const todayMin = Math.round(dataMin[0]);
-          document.getElementById('temp-main').textContent = `${todayMax}°`;
-          document.getElementById('temp-range').textContent = `${todayMin}° / ${todayMax}°`;
+            const todayMax = Math.round(dataMax[0]);
+            const todayMin = Math.round(dataMin[0]);
+            document.getElementById('temp-main').textContent = `${todayMax}°`;
+            document.getElementById('temp-range').textContent = `${todayMin}° / ${todayMax}°`;
         }
 
         // Päivämäärä + aika tekstiin
         const now = new Date();
         const dateFormatter = new Intl.DateTimeFormat('fi-FI', {
-          weekday: 'long', day: 'numeric', month: 'long'
+            weekday: 'long', day: 'numeric', month: 'long'
         });
         const timeFormatter = new Intl.DateTimeFormat('fi-FI', {
-          hour: '2-digit', minute: '2-digit'
+            hour: '2-digit', minute: '2-digit'
         });
         document.getElementById('current-time-label').textContent =
-          `${dateFormatter.format(now)} • ${timeFormatter.format(now)}`;
+            `${dateFormatter.format(now)} • ${timeFormatter.format(now)}`;
 
+        // Päivitä iso ikoni + kuvaus
         const mainIcon = document.querySelector('.weather-card .display-6');
         if (dataCode.length && dataRain.length) {
             mainIcon.textContent = iconForWeather(dataCode[0], dataRain[0]);
         }
-
         const mainDesc = document.getElementById('main-description');
         mainDesc.textContent = descriptionForWeather(dataCode[0]);
-
-
 
         // Täytetään taulukko
         const tbody = document.getElementById('forecastTable');
         tbody.innerHTML = labels.map((d, i) =>
-          `<tr>
-             <td>${d}</td>
-             <td>${dataMin[i] ?? '-'}</td>
-             <td>${dataMax[i] ?? '-'}</td>
-             <td>${dataRain[i] ?? '-'}</td>
-             <td>${dataWind[i] ?? '-'}</td>
-           </tr>`
+            `<tr>
+            <td>${d}</td>
+            <td>${dataMin[i] ?? '-'}</td>
+            <td>${dataMax[i] ?? '-'}</td>
+            <td>${dataRain[i] ?? '-'}</td>
+            <td>${dataWind[i] ?? '-'}</td>
+            </tr>`
         ).join('');
 
         // Päivien lyhenteet suomeksi
         const weekdayShortFi = ['su', 'ma', 'ti', 'ke', 'to', 'pe', 'la'];
 
         function iconForWeather(code, rain) {
-        // Priority: heavy rain > moderate rain > weather code
-        if (rain >= 70) return '🌧️';
-        if (rain >= 40) return '🌦️';
+            // Priority: heavy rain > moderate rain > weather code
+            if (rain >= 70) return '🌧️';
+            if (rain >= 40) return '🌦️';
 
-        // Official Open-Meteo WMO code mapping to simple emoji set
-        if (code === 0) return '☀️';                  // Clear sky
-        if (code === 1) return '🌤️';                  // Mainly clear
-        if (code === 2) return '⛅';                  // Partly cloudy
-        if (code === 3) return '☁️';                  // Overcast
+            // Official Open-Meteo WMO code mapping to simple emoji set
+            if (code === 0) return '☀️';                  // Clear sky
+            if (code === 1) return '🌤️';                  // Mainly clear
+            if (code === 2) return '⛅';                   // Partly cloudy
+            if (code === 3) return '☁️';                  // Overcast
 
-        if ([45, 48].includes(code)) return '🌫️';    // Fog
+            if ([45, 48].includes(code)) return '🌫️';     // Fog
 
-        if ([51, 53, 55].includes(code)) return '🌦️'; // Drizzle
-        if ([56, 57].includes(code)) return '🌧️';    // Freezing drizzle
+            if ([51, 53, 55].includes(code)) return '🌦️'; // Drizzle
+            if ([56, 57].includes(code)) return '🌧️';     // Freezing drizzle
 
-        if ([61, 63, 65].includes(code)) return '🌧️'; // Rain
-        if ([66, 67].includes(code)) return '🌧️';    // Freezing rain
+            if ([61, 63, 65].includes(code)) return '🌧️'; // Rain
+            if ([66, 67].includes(code)) return '🌧️';     // Freezing rain
 
-        if ([71, 73, 75].includes(code)) return '🌨️'; // Snowfall
-        if ([77].includes(code)) return '🌨️';        // Snow grains
+            if ([71, 73, 75].includes(code)) return '🌨️'; // Snowfall
+            if ([77].includes(code)) return '🌨️';         // Snow grains
 
-        if ([80, 81, 82].includes(code)) return '🌧️'; // Rain showers
-        if ([85, 86].includes(code)) return '🌨️';    // Snow showers
+            if ([80, 81, 82].includes(code)) return '🌧️'; // Rain showers
+            if ([85, 86].includes(code)) return '🌨️';     // Snow showers
 
-        if ([95].includes(code)) return '⛈️';         // Thunderstorm
-        if ([96, 99].includes(code)) return '⛈️';     // Thunderstorm + hail
+            if ([95].includes(code)) return '⛈️';          // Thunderstorm
+            if ([96, 99].includes(code)) return '⛈️';      // Thunderstorm + hail
 
-        // Fallback
-        return rain >= 30 ? '🌦️' : '☁️';
+            // Fallback
+            return rain >= 30 ? '🌦️' : '☁️';
         }
 
         function descriptionForWeather(code) {
-        // Open-Meteo weather code --> Finnish text
-        const map = {
+            // Open-Meteo weather code --> Finnish text
+            const map = {
             0:  "Selkeää",
             1:  "Enimmäkseen selkeää",
             2:  "Puolipilvistä",
@@ -295,140 +294,187 @@
             95: "Ukkosta",
             96: "Ukkosta ja raekuuroja",
             99: "Voimakasta ukkosta ja raekuuroja"
-        };
+            };
 
-        return map[code] || "Säädataa ei saatavilla";
+            return map[code] || "Säädataa ei saatavilla";
         }
 
-
+        // Päivän "kortit"
         const dailyStrip = document.getElementById('dailyStrip');
         dailyStrip.innerHTML = labels.map((d, i) => {
-        const dateObj = new Date(d);
-        const day  = weekdayShortFi[dateObj.getDay()];
-        const max  = Math.round(dataMax[i]);
-        const min  = Math.round(dataMin[i]);
-        const rain = Math.round(dataRain[i]);
-        const code = dataCode[i];
-        const icon = iconForWeather(code, rain);  // 🔥 ICONS FIXED HERE
+            const dateObj = new Date(d);
+            const day  = weekdayShortFi[dateObj.getDay()];
+            const max  = Math.round(dataMax[i]);
+            const min  = Math.round(dataMin[i]);
+            const rain = Math.round(dataRain[i]);
+            const code = dataCode[i];
+            const icon = iconForWeather(code, rain);
 
-        return `
-            <div class="daily-item">
-            <div class="day-label">${day}</div>
-            <div class="icon">${icon}</div>
-            <div class="temp-max">${max}°</div>
-            <div class="temp-min">${min}°</div>
-            <div class="small text-info">${rain}%</div>
+            return `
+            <div class="daily-item" data-date="${d}">
+                <div class="day-label">${day}</div>
+                <div class="icon">${icon}</div>
+                <div class="temp-max">${max}°</div>
+                <div class="temp-min">${min}°</div>
+                <div class="small text-info">${rain}%</div>
             </div>
-        `;
+            `;
         }).join('');
-
 
         // Y-akselin skaalaamista varten apufunktio
         function calcMinMax(data, margin = 2) {
-          if (!data.length) return {min: 0, max: 1};
-          const mn = Math.min(...data);
-          const mx = Math.max(...data);
-          return {min: mn - margin, max: mx + margin};
+            if (!data.length) return {min: 0, max: 1};
+            const mn = Math.min(...data);
+            const mx = Math.max(...data);
+            return {min: mn - margin, max: mx + margin};
         }
 
         const ctx = document.getElementById('forecastChart').getContext('2d');
         let currentUnit = '°C';
 
         const chartConfig = {
-          type: 'line',
-          data: {
+            type: 'line',
+            data: {
             labels,
             datasets: [{
-              label: 'Lämpötila (max °C)',
-              data: dataMax,
-              tension: 0.3,
-              fill: 'origin',
-              borderColor: '#f8d15c',
-              backgroundColor: 'rgba(248, 209, 92, 0.15)',
-              borderWidth: 2,
-              pointRadius: 2,
-              pointHoverRadius: 4,
+                label: 'Lämpötila (max °C)',
+                data: dataMax,
+                tension: 0.3,
+                fill: 'origin',
+                borderColor: '#f8d15c',
+                backgroundColor: 'rgba(248, 209, 92, 0.15)',
+                borderWidth: 2,
+                pointRadius: 2,
+                pointHoverRadius: 4,
             }]
-          },
-          options: {
+            },
+            options: {
             responsive: true,
             maintainAspectRatio: true,
             interaction: { mode: 'index', intersect: false },
             scales: {
-              y: {
+                y: {
                 title: { display: true, text: '°C', color: '#d0d0e0' },
                 ticks: { color: '#d0d0e0' },
                 grid: { color: 'rgba(255,255,255,0.05)' }
-              },
-              x: {
+                },
+                x: {
                 ticks: { color: '#d0d0e0' },
                 grid: { display: false }
-              }
+                }
             },
             plugins: {
-              legend: { display: false },
-              tooltip: {
+                legend: { display: false },
+                tooltip: {
                 callbacks: {
-                  label: ctx => `${ctx.parsed.y} ${currentUnit}`
+                    label: ctx => `${ctx.parsed.y} ${currentUnit}`
                 }
-              }
+                }
             }
-          }
+            }
         };
 
         const chart = new Chart(ctx, chartConfig);
 
+        // Vaihda välilehtien (päivä) moodi
         function setChartMode(mode) {
-          let data, label, color, bg, unit;
+            let data, label, color, bg, unit;
 
-          if (mode === 'rain') {
+            // aina takaisin päivätasoille
+            chart.data.labels = labels;
+
+            if (mode === 'rain') {
             data = dataRain;
             label = 'Sateen mahdollisuus (%)';
             color = '#4da6ff';
             bg = 'rgba(77, 166, 255, 0.15)';
             unit = '%';
-          } else if (mode === 'wind') {
+            } else if (mode === 'wind') {
             data = dataWind;
             label = 'Tuuli (km/h)';
             color = '#7af59b';
             bg = 'rgba(122, 245, 155, 0.15)';
             unit = ' km/h';
-          } else { // temp
+            } else { // temp
             data = dataMax;
             label = 'Lämpötila (max °C)';
             color = '#f8d15c';
             bg = 'rgba(248, 209, 92, 0.15)';
             unit = '°C';
-          }
+            }
 
-          currentUnit = unit;
+            currentUnit = unit;
 
-          chart.data.datasets[0].data = data;
-          chart.data.datasets[0].label = label;
-          chart.data.datasets[0].borderColor = color;
-          chart.data.datasets[0].backgroundColor = bg;
+            chart.data.datasets[0].data = data;
+            chart.data.datasets[0].label = label;
+            chart.data.datasets[0].borderColor = color;
+            chart.data.datasets[0].backgroundColor = bg;
 
-          const {min, max} = calcMinMax(data, mode === 'rain' ? 5 : 2);
-          chart.options.scales.y.title.text = mode === 'rain' ? '%' : unit.trim();
-          chart.options.scales.y.min = min;
-          chart.options.scales.y.max = max;
+            const {min, max} = calcMinMax(data, mode === 'rain' ? 5 : 2);
+            chart.options.scales.y.title.text = mode === 'rain' ? '%' : unit.trim();
+            chart.options.scales.y.min = min;
+            chart.options.scales.y.max = max;
 
-          chart.update();
+            chart.update();
         }
 
-        // Tab-napit
+        // Tuntikohtainen näkymä tietylle päivälle
+        function showHourlyFor(dateStr) {
+            const entries = hourlyData[dateStr];
+            if (!entries || !entries.length) {
+            console.warn('No hourly data for', dateStr);
+            return;
+            }
+
+            const hourLabels = entries.map(e => e.time);
+            const temps      = entries.map(e => e.temp);
+            const {min, max} = calcMinMax(temps, 1);
+
+            currentUnit = '°C';
+            chart.data.labels = hourLabels;
+            chart.data.datasets[0].data = temps;
+            chart.data.datasets[0].label = `Tuntikohtainen lämpötila (${dateStr})`;
+            chart.data.datasets[0].borderColor = '#f8d15c';
+            chart.data.datasets[0].backgroundColor = 'rgba(248, 209, 92, 0.15)';
+
+            chart.options.scales.y.title.text = '°C';
+            chart.options.scales.y.min = min;
+            chart.options.scales.y.max = max;
+
+            chart.update();
+        }
+
+        // Päiväkorttien klikkaukset -> tuntigraafi
+        document.querySelectorAll('.daily-item').forEach(item => {
+            item.addEventListener('click', () => {
+            const dateStr = item.getAttribute('data-date');
+            showHourlyFor(dateStr);
+
+            // aktiivinen kortti
+            document.querySelectorAll('.daily-item').forEach(d => d.classList.remove('selected'));
+            item.classList.add('selected');
+
+            // takaisin "Lämpötila"-tabiin visuaalisesti
+            document.querySelectorAll('.nav-weather .nav-link').forEach(b => b.classList.remove('active'));
+            const tempTab = document.querySelector('.nav-weather .nav-link[data-mode="temp"]');
+            if (tempTab) tempTab.classList.add('active');
+            });
+        });
+
+        // Tab-napit (päivätason moodit)
         document.querySelectorAll('.nav-weather .nav-link').forEach(btn => {
-          btn.addEventListener('click', () => {
+            btn.addEventListener('click', () => {
             document.querySelectorAll('.nav-weather .nav-link').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             const mode = btn.getAttribute('data-mode');
             setChartMode(mode);
-          });
+            });
         });
 
-        // Alku: lämpötila
+        // Alku: päivätason lämpötila
         setChartMode('temp');
-      </script>
+        </script>
+
     {% else %}
       <p>Lisää ensin kaupunki.</p>
     {% endif %}
