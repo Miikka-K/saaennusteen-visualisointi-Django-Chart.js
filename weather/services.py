@@ -1,8 +1,9 @@
 import requests
-from datetime import datetime, date, timedelta
+from datetime import date, timedelta, datetime
 from .models import Forecast, City
 
 OPEN_METEO_URL = "https://api.open-meteo.com/v1/forecast"
+
 
 def fetch_and_store_forecast(city: City):
     today = date.today()
@@ -11,7 +12,10 @@ def fetch_and_store_forecast(city: City):
     params = {
         "latitude": city.latitude,
         "longitude": city.longitude,
-        "daily": "temperature_2m_max,temperature_2m_min",
+        "daily": (
+            "temperature_2m_max,temperature_2m_min,"
+            "precipitation_probability_max,windspeed_10m_max"
+        ),
         "timezone": "auto",
         "start_date": today.isoformat(),
         "end_date": end_date.isoformat(),
@@ -25,13 +29,22 @@ def fetch_and_store_forecast(city: City):
         return
 
     data = r.json()
-    dates = data.get("daily", {}).get("time", [])
-    maxes = data.get("daily", {}).get("temperature_2m_max", [])
-    mins  = data.get("daily", {}).get("temperature_2m_min", [])
+    daily = data.get("daily", {})
 
-    for d, tmax, tmin in zip(dates, maxes, mins):
+    dates = daily.get("time", [])
+    maxes = daily.get("temperature_2m_max", [])
+    mins = daily.get("temperature_2m_min", [])
+    rains = daily.get("precipitation_probability_max", [])
+    winds = daily.get("windspeed_10m_max", [])
+
+    for d, tmax, tmin, rain, wind in zip(dates, maxes, mins, rains, winds):
         Forecast.objects.update_or_create(
             city=city,
             date=datetime.fromisoformat(d).date(),
-            defaults={"temp_max": tmax, "temp_min": tmin},
+            defaults={
+                "temp_max": tmax,
+                "temp_min": tmin,
+                "rain_probability": rain,  # %
+                "wind_speed": wind,        # km/h (Open-Meteo default)
+            },
         )

@@ -14,6 +14,11 @@ class Forecast(models.Model):
     temp_max = models.FloatField(null=True, blank=True)
     temp_min = models.FloatField(null=True, blank=True)
 
+    rain_probability = models.FloatField(null=True, blank=True)
+    wind_speed = models.FloatField(null=True, blank=True)
+
+    
+
     class Meta:
         unique_together = ('city', 'date')
         ordering = ['date']
