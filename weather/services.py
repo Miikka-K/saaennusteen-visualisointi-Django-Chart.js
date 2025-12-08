@@ -13,8 +13,11 @@ def fetch_and_store_forecast(city: City):
         "latitude": city.latitude,
         "longitude": city.longitude,
         "daily": (
-            "temperature_2m_max,temperature_2m_min,"
-            "precipitation_probability_max,windspeed_10m_max"
+            "weathercode,"                    # 👈 put weathercode first
+            "temperature_2m_max,"
+            "temperature_2m_min,"
+            "precipitation_probability_max,"
+            "windspeed_10m_max"
         ),
         "timezone": "auto",
         "start_date": today.isoformat(),
@@ -31,20 +34,25 @@ def fetch_and_store_forecast(city: City):
     data = r.json()
     daily = data.get("daily", {})
 
+    print("daily keys from API:", daily.keys())          # 👈 debug
+    codes = daily.get("weathercode", [])
+    print("weather codes from API:", codes)              # 👈 debug
+
     dates = daily.get("time", [])
     maxes = daily.get("temperature_2m_max", [])
-    mins = daily.get("temperature_2m_min", [])
+    mins  = daily.get("temperature_2m_min", [])
     rains = daily.get("precipitation_probability_max", [])
     winds = daily.get("windspeed_10m_max", [])
 
-    for d, tmax, tmin, rain, wind in zip(dates, maxes, mins, rains, winds):
+    for d, tmax, tmin, rain, wind, code in zip(dates, maxes, mins, rains, winds, codes):
         Forecast.objects.update_or_create(
             city=city,
             date=datetime.fromisoformat(d).date(),
             defaults={
                 "temp_max": tmax,
                 "temp_min": tmin,
-                "rain_probability": rain,  # %
-                "wind_speed": wind,        # km/h (Open-Meteo default)
+                "rain_probability": rain,
+                "wind_speed": wind,
+                "weather_code": code,
             },
         )

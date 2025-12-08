@@ -17,7 +17,7 @@ class Forecast(models.Model):
     rain_probability = models.FloatField(null=True, blank=True)
     wind_speed = models.FloatField(null=True, blank=True)
 
-    
+    weather_code = models.IntegerField(null=True, blank=True)
 
     class Meta:
         unique_together = ('city', 'date')

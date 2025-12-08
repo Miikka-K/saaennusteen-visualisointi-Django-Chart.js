@@ -35,6 +35,7 @@ class ForecastView(View):
         data_min  = [float(f.temp_min) for f in qs]
         data_rain = [float(f.rain_probability or 0) for f in qs]
         data_wind = [float(f.wind_speed or 0) for f in qs]
+        data_code = [int(f.weather_code or 0) for f in qs]
 
         ctx = {
             "cities": cities,
@@ -45,5 +46,6 @@ class ForecastView(View):
             "data_min": data_min,
             "data_rain": data_rain,
             "data_wind": data_wind,
+            "data_code": data_code,
         }
         return render(request, self.template_name, ctx)

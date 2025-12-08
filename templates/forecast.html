@@ -131,7 +131,7 @@
           <div class="text-end">
             <div class="display-6">☁️</div>
             <small id="current-time-label"></small>
-            <div class="small text-secondary">Pilvistä (esimerkki)</div>
+            <div class="small text-secondary" id="main-description"></div>
           </div>
         </div>
       </div>
@@ -185,6 +185,8 @@
         const dataMin  = {{ data_min|safe }};
         const dataRain = {{ data_rain|safe }};
         const dataWind = {{ data_wind|safe }};
+        const dataCode = {{ data_code|safe }};
+        console.log('codes from backend:', dataCode);
 
         // Päivitä pääkortti (tämän päivän data)
         if (dataMax.length && dataMin.length) {
@@ -205,6 +207,16 @@
         document.getElementById('current-time-label').textContent =
           `${dateFormatter.format(now)} • ${timeFormatter.format(now)}`;
 
+        const mainIcon = document.querySelector('.weather-card .display-6');
+        if (dataCode.length && dataRain.length) {
+            mainIcon.textContent = iconForWeather(dataCode[0], dataRain[0]);
+        }
+
+        const mainDesc = document.getElementById('main-description');
+        mainDesc.textContent = descriptionForWeather(dataCode[0]);
+
+
+
         // Täytetään taulukko
         const tbody = document.getElementById('forecastTable');
         tbody.innerHTML = labels.map((d, i) =>
@@ -220,26 +232,96 @@
         // Päivien lyhenteet suomeksi
         const weekdayShortFi = ['su', 'ma', 'ti', 'ke', 'to', 'pe', 'la'];
 
-        // Vaakasuora 7-päivän lista
+        function iconForWeather(code, rain) {
+        // Priority: heavy rain > moderate rain > weather code
+        if (rain >= 70) return '🌧️';
+        if (rain >= 40) return '🌦️';
+
+        // Official Open-Meteo WMO code mapping to simple emoji set
+        if (code === 0) return '☀️';                  // Clear sky
+        if (code === 1) return '🌤️';                  // Mainly clear
+        if (code === 2) return '⛅';                  // Partly cloudy
+        if (code === 3) return '☁️';                  // Overcast
+
+        if ([45, 48].includes(code)) return '🌫️';    // Fog
+
+        if ([51, 53, 55].includes(code)) return '🌦️'; // Drizzle
+        if ([56, 57].includes(code)) return '🌧️';    // Freezing drizzle
+
+        if ([61, 63, 65].includes(code)) return '🌧️'; // Rain
+        if ([66, 67].includes(code)) return '🌧️';    // Freezing rain
+
+        if ([71, 73, 75].includes(code)) return '🌨️'; // Snowfall
+        if ([77].includes(code)) return '🌨️';        // Snow grains
+
+        if ([80, 81, 82].includes(code)) return '🌧️'; // Rain showers
+        if ([85, 86].includes(code)) return '🌨️';    // Snow showers
+
+        if ([95].includes(code)) return '⛈️';         // Thunderstorm
+        if ([96, 99].includes(code)) return '⛈️';     // Thunderstorm + hail
+
+        // Fallback
+        return rain >= 30 ? '🌦️' : '☁️';
+        }
+
+        function descriptionForWeather(code) {
+        // Open-Meteo weather code --> Finnish text
+        const map = {
+            0:  "Selkeää",
+            1:  "Enimmäkseen selkeää",
+            2:  "Puolipilvistä",
+            3:  "Pilvistä",
+            45: "Sumua",
+            48: "Kuuraa sumussa",
+            51: "Kevyttä tihkusadetta",
+            53: "Tihkusadetta",
+            55: "Voimakasta tihkusadetta",
+            56: "Jäätävää tihkua",
+            57: "Voimakasta jäätävää tihkua",
+            61: "Kevyttä sadetta",
+            63: "Sadetta",
+            65: "Voimakasta sadetta",
+            66: "Jäätävää sadetta",
+            67: "Voimakasta jäätävää sadetta",
+            71: "Kevyttä lumisadetta",
+            73: "Lumisadetta",
+            75: "Voimakasta lumisadetta",
+            77: "Lumijyväsiä",
+            80: "Sadekuuroja",
+            81: "Voimakkaita sadekuuroja",
+            82: "Erittäin voimakkaita sadekuuroja",
+            85: "Lumikuuroja",
+            86: "Voimakkaita lumikuuroja",
+            95: "Ukkosta",
+            96: "Ukkosta ja raekuuroja",
+            99: "Voimakasta ukkosta ja raekuuroja"
+        };
+
+        return map[code] || "Säädataa ei saatavilla";
+        }
+
+
         const dailyStrip = document.getElementById('dailyStrip');
         dailyStrip.innerHTML = labels.map((d, i) => {
-          const dateObj = new Date(d);
-          const day = weekdayShortFi[dateObj.getDay()];
-          const max = dataMax[i] !== undefined ? Math.round(dataMax[i]) : '-';
-          const min = dataMin[i] !== undefined ? Math.round(dataMin[i]) : '-';
-          const rain = dataRain[i] !== undefined ? Math.round(dataRain[i]) : '-';
-          const icon = '☁️'; // myöhemmin vaihdetaan oikeisiin ikoneihin
+        const dateObj = new Date(d);
+        const day  = weekdayShortFi[dateObj.getDay()];
+        const max  = Math.round(dataMax[i]);
+        const min  = Math.round(dataMin[i]);
+        const rain = Math.round(dataRain[i]);
+        const code = dataCode[i];
+        const icon = iconForWeather(code, rain);  // 🔥 ICONS FIXED HERE
 
-          return `
+        return `
             <div class="daily-item">
-              <div class="day-label">${day}</div>
-              <div class="icon">${icon}</div>
-              <div class="temp-max">${max}°</div>
-              <div class="temp-min">${min}°</div>
-              <div class="small text-info">${rain}%</div>
+            <div class="day-label">${day}</div>
+            <div class="icon">${icon}</div>
+            <div class="temp-max">${max}°</div>
+            <div class="temp-min">${min}°</div>
+            <div class="small text-info">${rain}%</div>
             </div>
-          `;
+        `;
         }).join('');
+
 
         // Y-akselin skaalaamista varten apufunktio
         function calcMinMax(data, margin = 2) {
