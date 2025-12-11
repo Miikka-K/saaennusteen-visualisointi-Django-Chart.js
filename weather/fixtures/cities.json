@@ -3,21 +3,27 @@
     "model": "weather.city",
     "pk": 1,
     "fields": {
-      "name": "Helsinki"
+      "name": "Helsinki",
+      "latitude": 60.1699,
+      "longitude": 24.9384
     }
   },
   {
     "model": "weather.city",
     "pk": 2,
     "fields": {
-      "name": "Turku"
+      "name": "Turku",
+      "latitude": 60.4518,
+      "longitude": 22.2666
     }
   },
   {
     "model": "weather.city",
     "pk": 3,
     "fields": {
-      "name": "Tampere"
+      "name": "Tampere",
+      "latitude": 61.4978,
+      "longitude": 23.7610
     }
   }
 ]
