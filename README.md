@@ -5,4 +5,4 @@ Sovellus toimii sivulla: https://saaennusteen-visualisointi.onrender.com/?city=2
 
 Step by step asennus omalle koneelle:
 
-1. Varmista, että koneessasi on Python (Minulla oli projektia tehdessä 3.13.6) ja tämän voit tarkistaa VS Coden terminaalista komennolla 'python --version' tai 'python3 --version'
+1. Varmista, että koneessasi on Python (Minulla oli projektia tehdessä 3.13.6) ja tämän voit tarkistaa VS Coden terminaalista komennolla `python --version` tai `python3 --version`
