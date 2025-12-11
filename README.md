@@ -24,7 +24,8 @@ Sovellus toimii sivulla: https://saaennusteen-visualisointi.onrender.com/?city=2
 
 10. Projektin pitäisi näillä lähteä käyntiin komennolla `python manage.py runserver` ja näkyy sivulla: http://127.0.0.1:8000/
    
-# Päivitysideoita:
-1. Siirtyminen PostgreSQL-tietokantaan (Data ei katoa ja paljon käytännöllisempi jos halutaan lisätä esim. koko suomen kaupungit)
+# Päivitys ja korjaus ideoita:
+1. Siirtyminen PostgreSQL-tietokantaan (Data ei katoa ja paljon käytännöllisempi jos halutaan laajentaa sovellusta).
 2. Koko suomen kaupunkien lisääminen sovellukseen, esimerkiksi käyttäen CSV-tiedostoja hyväksi.
-3. Näytä tuntikohtainen sateen mahdollisuus ja tuulen nopeus (nyt näyttää vasta tuntikohtaisen lämpötilan päiväkorttia napauttamalla)
+3. Näytä tuntikohtainen sateen mahdollisuus ja tuulen nopeus (nyt näyttää vasta tuntikohtaisen lämpötilan päiväkorttia napauttamalla).
+4. LÄMPÖTILA NYT, näyttää virheellisesti päivän korkeimman lämpötilan, eikä tämänhetkistä lämpötilaa.
