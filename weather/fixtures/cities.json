@@ -1,0 +1,23 @@
+[
+  {
+    "model": "weather.city",
+    "pk": 1,
+    "fields": {
+      "name": "Helsinki"
+    }
+  },
+  {
+    "model": "weather.city",
+    "pk": 2,
+    "fields": {
+      "name": "Turku"
+    }
+  },
+  {
+    "model": "weather.city",
+    "pk": 3,
+    "fields": {
+      "name": "Tampere"
+    }
+  }
+]
