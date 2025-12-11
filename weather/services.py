@@ -15,7 +15,7 @@ def fetch_and_store_forecast(city: City):
         "latitude": city.latitude,
         "longitude": city.longitude,
         "daily": (
-            "weathercode,"                    # 👈 put weathercode first
+            "weathercode,"                    # weathercode ensimmäiseksi!
             "temperature_2m_max,"
             "temperature_2m_min,"
             "precipitation_probability_max,"
@@ -36,9 +36,7 @@ def fetch_and_store_forecast(city: City):
     data = r.json()
     daily = data.get("daily", {})
 
-    print("daily keys from API:", daily.keys())          # 👈 debug
     codes = daily.get("weathercode", [])
-    print("weather codes from API:", codes)              # 👈 debug
 
     dates = daily.get("time", [])
     maxes = daily.get("temperature_2m_max", [])
@@ -97,8 +95,8 @@ def get_hourly_forecast(city: City):
     for t, temp in zip(times, temps):
         # t esimerkki: "2025-12-08T10:00"
         dt = datetime.fromisoformat(t)
-        date_str = dt.date().isoformat()   # "2025-12-08"
-        time_str = dt.strftime("%H:%M")    # "10:00"
+        date_str = dt.date().isoformat()   # Näyttää = "2025-12-08"
+        time_str = dt.strftime("%H:%M")    # Näyttää = "10:00"
         result[date_str].append({
             "time": time_str,
             "temp": temp,

@@ -5,11 +5,9 @@
   <title>Sääennuste</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- Bootstrap -->
   <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 
-  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
@@ -98,8 +96,6 @@
 </head>
 <body>
   <div class="container py-4">
-
-    <!-- Header + city select -->
     <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 mb-3">
       <h1 class="h4 mb-0">Sää</h1>
 
@@ -116,7 +112,6 @@
     </div>
 
     {% if city %}
-      <!-- Main weather card -->
       <div class="weather-card p-4 mb-4 shadow-sm">
         <div class="d-flex justify-content-between align-items-start">
           <div>
@@ -136,7 +131,6 @@
         </div>
       </div>
 
-      <!-- Tabs: temp / rain / wind -->
       <ul class="nav nav-tabs nav-weather mb-2">
         <li class="nav-item">
           <button class="nav-link active" type="button" data-mode="temp">Lämpötila</button>
@@ -149,17 +143,14 @@
         </li>
       </ul>
 
-      <!-- Chart card -->
       <div class="card card-dark mb-3">
         <div class="card-body">
           <canvas id="forecastChart" height="120"></canvas>
         </div>
       </div>
 
-      <!-- Horizontal 7-day strip -->
       <div class="daily-strip" id="dailyStrip"></div>
 
-      <!-- Table card -->
       <div class="card card-dark">
         <div class="card-body">
           <h2 class="h6 mb-3">Taulukko</h2>
@@ -186,7 +177,7 @@
         const dataRain = {{ data_rain|safe }};
         const dataWind = {{ data_wind|safe }};
         const dataCode = {{ data_code|safe }};
-        const hourlyData = {{ hourly_json|safe }};   // 👈 UUSI: tuntidata
+        const hourlyData = {{ hourly_json|safe }};   
         console.log('codes from backend:', dataCode);
 
         // Päivitä pääkortti (tämän päivän data)
@@ -232,11 +223,11 @@
         const weekdayShortFi = ['su', 'ma', 'ti', 'ke', 'to', 'pe', 'la'];
 
         function iconForWeather(code, rain) {
-            // Priority: heavy rain > moderate rain > weather code
+            // Priorisoidaan ennusteet: heavy rain > moderate rain > weather code
             if (rain >= 70) return '🌧️';
             if (rain >= 40) return '🌦️';
 
-            // Official Open-Meteo WMO code mapping to simple emoji set
+            // Open-Meteo code mapping emojeina näytettynä
             if (code === 0) return '☀️';                  // Clear sky
             if (code === 1) return '🌤️';                  // Mainly clear
             if (code === 2) return '⛅';                   // Partly cloudy
@@ -264,7 +255,7 @@
         }
 
         function descriptionForWeather(code) {
-            // Open-Meteo weather code --> Finnish text
+            // Open-Meteo sääkoodi käännetty suomeksi
             const map = {
             0:  "Selkeää",
             1:  "Enimmäkseen selkeää",

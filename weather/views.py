@@ -13,18 +13,18 @@ class ForecastView(View):
 
     def get(self, request):
 
-        # All cities
+        # Kaikki kaupungit
         cities = City.objects.all().order_by("name")
 
-        # Selected city
+        # Hakee kaupungin tiedot
         city_id = request.GET.get("city") or (cities.first().id if cities else None)
         city = get_object_or_404(City, id=city_id) if city_id else None
 
-        # Update daily forecast
+        # Päiväkohtainen ennuste
         if city:
             fetch_and_store_forecast(city)
 
-        # Daily forecast values (7 days)
+        # Päivittäiset ennusteet 7 päivälle
         qs = (
             Forecast.objects
             .filter(city=city, date__gte=date.today())
@@ -38,7 +38,7 @@ class ForecastView(View):
         data_wind = [float(f.wind_speed or 0) for f in qs]
         data_code = [int(f.weather_code or 0) for f in qs]
 
-        # NEW: Hourly temperature data for each day
+        # Hakee tuntikohtaisen sääennusteen seuraavalle 7 päivälle.
         hourly = get_hourly_forecast(city) if city else {}
         hourly_json = json.dumps(hourly)
 
@@ -52,8 +52,6 @@ class ForecastView(View):
             "data_rain": data_rain,
             "data_wind": data_wind,
             "data_code": data_code,
-
-            # 👇 NEW — the hourly temperature JSON
             "hourly_json": hourly_json,
         }
 
