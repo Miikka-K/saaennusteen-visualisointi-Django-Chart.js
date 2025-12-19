@@ -8,7 +8,7 @@ Sovellus toimii sivulla: https://saaennusteen-visualisointi.onrender.com/?city=2
 1. Varmista, että sinulla on Python (Minulla oli projektia tehdessä 3.13.6) ja tämän voit tarkistaa VS Coden terminaalista komennolla:      
  `python --version` tai `python3 --version`
 
-3. Kloonaa repositorio täältä painamalla vihreää code nappia: <img width="910" height="451" alt="image" src="https://github.com/user-attachments/assets/e67c6ef9-71d3-476f-8cc4-915c6f48df03" />
+3. Kloonaa repositorio githubista painamalla vihreää code nappia: <img width="910" height="451" alt="image" src="https://github.com/user-attachments/assets/e67c6ef9-71d3-476f-8cc4-915c6f48df03" />
 
 4. Avaa VS Code ja Welcome ruudussa voit painaa "Clone Git Repository..." joka avaa kentän mihin voit kopioida repositorion linkin:<img width="1201" height="793" alt="image" src="https://github.com/user-attachments/assets/e9970513-4322-48d3-ad46-58dd2cab5578" />
 
